@@ -1,0 +1,42 @@
+{% extends "./base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="p-4 m-3">
+                <div class="w-75 mx-auto">
+                    <img src="{{object.image.url}}" class="img-fluid" alt="">
+                </div>
+
+            </div>
+        </div>
+        <div class="col"><br><br>
+            <div class="p-3 m-2">
+                <div class="display-4">{{object.title}}</div>
+                <hr>
+                <p>{{object.description}}</p>
+                <h4>Price : ₹{{object.price}}</h4>
+            </div>
+            <div class="row">
+                <div class="col mt-3">
+                    <div class="p-2">
+                        <a href="/addtocart/{{object.slug}}?return_url={{request.path}}"
+                            class="btn btn-outline-dark btn-block">Add To Cart</a>
+                    </div>
+                </div>
+                <div class="col mt-3">
+                    <div class="p-2">
+                        <a href="" class="btn btn-outline-dark btn-block">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{{object.title}}

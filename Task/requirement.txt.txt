@@ -1,0 +1,6 @@
+python 3
+django 2.2
+django-crispy-forms-1.11.0
+
+admin username = shibdas
+admin pass = 1234
