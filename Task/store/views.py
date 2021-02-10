@@ -86,37 +86,6 @@ def signup(request):
     return render(request, template_name='store/signup.html', context=context)
 
 
-# def cart(request):
-#     cart = request.session.get('cart')
-#     print(cart)
-#     # session_cart = []
-#     if request.method == "POST":
-#         product_id = int(request.POST['product-id'])
-#         quentity = request.POST['quentity']
-#         if request.user.is_authenticated:
-#             obj = Cart.objects.filter(product=product_id, user=request.user)
-#             obj.delete()
-#             cart_obj = Cart.objects.filter(user=request.user)
-#             session_cart = []
-#             for c in cart_obj:
-#                 obj = {
-#                     'item': c.id,
-#                     'quentity': c.quentity
-#                 }
-#                 session_cart.append(obj)
-#             cart = session_cart
-#             print(cart)
-#     # cart = request.session.get('cart')
-
-#     if cart is None:
-#         cart = []
-#     for c in cart:
-#         item_id = c.get('item')
-#         item = Product.objects.get(id=item_id)
-#         c['item'] = item
-
-#     return render(request, template_name='store/cart.html', context={'cart': cart})
-
 
 def cart(request):
     cart = request.session.get('cart')

@@ -4,3 +4,7 @@ django-crispy-forms-1.11.0
 
 admin username = shibdas
 admin pass = 1234
+
+stuff login
+user = test@gmail.com
+pass = test@123
