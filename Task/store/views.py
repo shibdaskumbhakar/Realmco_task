@@ -3,6 +3,7 @@ from store.forms.authforms import UserCreationForm, UserLoginForm
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login as userlogin
 from store.models import Product, Cart
+from django.contrib.auth.models import User
 from django.views.generic import DetailView, DeleteView
 
 from django.contrib.admin.views.decorators import staff_member_required
@@ -34,6 +35,19 @@ def login(request):
             user = authenticate(username=username, password=password)
             if user:
                 userlogin(request, user)
+
+                session_cart = request.session.get('cart')
+                if session_cart is None:
+                    session_cart = []
+                else:
+                    for c in session_cart:
+                        item = c.get('item')
+                        quentity = c.get('quentity')
+                        cart_obj = Cart()
+                        cart_obj.product = Product.objects.get(id=item)
+                        cart_obj.quentity = quentity
+                        cart_obj.user = user
+                        cart_obj.save()
                 cart = Cart.objects.filter(user=user)
                 session_cart = []
                 for c in cart:
@@ -72,15 +86,55 @@ def signup(request):
     return render(request, template_name='store/signup.html', context=context)
 
 
+# def cart(request):
+#     cart = request.session.get('cart')
+#     print(cart)
+#     # session_cart = []
+#     if request.method == "POST":
+#         product_id = int(request.POST['product-id'])
+#         quentity = request.POST['quentity']
+#         if request.user.is_authenticated:
+#             obj = Cart.objects.filter(product=product_id, user=request.user)
+#             obj.delete()
+#             cart_obj = Cart.objects.filter(user=request.user)
+#             session_cart = []
+#             for c in cart_obj:
+#                 obj = {
+#                     'item': c.id,
+#                     'quentity': c.quentity
+#                 }
+#                 session_cart.append(obj)
+#             cart = session_cart
+#             print(cart)
+#     # cart = request.session.get('cart')
+
+#     if cart is None:
+#         cart = []
+#     for c in cart:
+#         item_id = c.get('item')
+#         item = Product.objects.get(id=item_id)
+#         c['item'] = item
+
+#     return render(request, template_name='store/cart.html', context={'cart': cart})
+
+
 def cart(request):
     cart = request.session.get('cart')
+    if request.method == "POST":
+        product_id = int(request.POST['product-id'])
+        quentity = request.POST['quentity']
+        if cart is None:
+            cart = []
+        for i in range(len(cart)):
+            if cart[i]['item'] == product_id:
+                del cart[i]
+                break
     if cart is None:
         cart = []
     for c in cart:
         item_id = c.get('item')
         item = Product.objects.get(id=item_id)
         c['item'] = item
-    print(cart)
     return render(request, template_name='store/cart.html', context={'cart': cart})
 
 
@@ -153,3 +207,58 @@ def admin(request):
     return render(request, template_name='store/admin.html', context=context)
 
 
+def add_product(request):
+    if request.method == 'POST' and request.FILES['image']:
+        image = request.FILES['image']
+
+        title = request.POST['title']
+        price = request.POST['price']
+
+        description = request.POST['description']
+        obj = Product()
+        obj.title = title
+        obj.description = description
+        obj.price = price
+        obj.image = image
+        obj.save()
+        return redirect('/custom-admin')
+    return render(request, template_name='store/add_product.html')
+
+
+def edit_product(request):
+    if request.method == 'POST' and request.FILES['image']:
+        image = request.FILES['image']
+
+        title = request.POST['title']
+        price = request.POST['price']
+
+        description = request.POST['description']
+        obj = Product()
+        obj.title = title
+        obj.description = description
+        obj.price = price
+        obj.image = image
+        obj.save()
+        return redirect('/custom-admin')
+    return render(request, template_name='store/add_product.html')
+
+
+def edit_product(request):
+    if request.method == "GET":
+        slug = request.GET['slug']
+        print(slug)
+        context = {
+            "slug": slug
+        }
+        return render(request, template_name='store/edit.html', context=context)
+    if request.method == "POST" and request.FILES['image']:
+        image = request.FILES['image']
+        slug = request.POST['slug']
+        print(slug)
+        title = request.POST['title']
+        price = request.POST['price']
+        description = request.POST['description']
+        obj = Product.objects.filter(slug=slug).update(
+            image=image, title=title, price=price, description=description)
+
+        return redirect('/custom-admin')
